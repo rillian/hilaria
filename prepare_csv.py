@@ -7,9 +7,12 @@ import csv
 
 def read_text(infilename):
     with open(infilename, newline='') as infile:
+        longest = 0
         reader = csv.reader(infile)
         for row in reader:
-            print(f'{row[0]: ^5} : {row[2]}')
+            print(f'{row[0]: ^5} : {row[2]: <62} : {row[7]}')
+            longest = max(longest, len(row[2]))
+    print(f'Longest Coptic line is {longest}')
 
 if __name__ == '__main__':
     import sys
