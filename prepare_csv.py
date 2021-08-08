@@ -30,7 +30,6 @@ class LineRef:
         return cls(page, line)
 
 
-
 def read_text(infilename):
     with open(infilename, newline='') as infile:
         ref = None
@@ -71,6 +70,7 @@ def read_text(infilename):
         else:
             label = ' '
         print(f'  {label}\t{ord(key):04X}\t{name}')
+
 
 if __name__ == '__main__':
     import sys
