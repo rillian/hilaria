@@ -7,11 +7,23 @@ import csv
 
 def read_text(infilename):
     with open(infilename, newline='') as infile:
+        page = line = None
         longest = 0
         reader = csv.reader(infile)
+        # first row has the column headings
+        header = reader.__next__()
         for row in reader:
-            print(f'{row[0]: ^5} : {row[2]: <62} : {row[7]}')
-            longest = max(longest, len(row[2]))
+            coptic = row[2]
+            note = row[7]
+            line_number = row[0]
+            # fill in continuous line numbers
+            try:
+                page, line = map(int, line_number.split('.'))
+            except ValueError:
+                line += 1
+                line_number = f'{page}.{line}'
+            print(f'{line_number: ^5} : {coptic: <62} : {note}')
+            longest = max(longest, len(coptic))
     print(f'Longest Coptic line is {longest}')
 
 if __name__ == '__main__':
