@@ -31,10 +31,10 @@ class LineRef:
 
 
 def read_text(infilename):
+    text = []
     with open(infilename, newline='') as infile:
         ref = None
         longest = 0
-        chars = set()
         reader = csv.reader(infile)
         # first row has the column headings
         header = reader.__next__()
@@ -48,9 +48,19 @@ def read_text(infilename):
                 # Otherwise calculate the next expected line number.
                 ref.increment()
             print(f'{str(ref): ^5} : {coptic: <62} : {note}')
+            text.append([ref, coptic, note])
             longest = max(longest, len(coptic))
-            chars.update(set(coptic))
     print(f'Longest Coptic line is {longest}')
+    return text
+
+
+def analyse_chars(text):
+    '''Report a list of unicode characters used in the text.'''
+
+    chars = set()
+    for line in text:
+        chars.update(set(line[1]))
+
     print('Characters in the text:')
     keys = list(chars)
     keys.sort()
@@ -80,4 +90,5 @@ if __name__ == '__main__':
         print('Parse the text of Hillaria out of a csv export.')
         exit(1)
 
-    read_text(sys.argv[1])
+    text = read_text(sys.argv[1])
+    analyse_chars(text)
