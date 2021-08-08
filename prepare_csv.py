@@ -64,7 +64,9 @@ def read_text(infilename):
             name = 'newline'
         elif key == '\t':
             name = 'tab'
-        if key.isprintable():
+        if unicodedata.combining(key):
+            label = '\u25CC' + key
+        elif key.isprintable():
             label = key
         else:
             label = ' '
