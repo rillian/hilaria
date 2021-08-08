@@ -6,9 +6,34 @@
 import csv
 import unicodedata
 
+class LineRef:
+    '''Represent a `page.line` style reference
+
+       This is the scheme used in Drescher's transcription.
+       We provide a string representation so it can be printed
+       as normal.'''
+    def __init__(self, page, line):
+        self.page = page
+        self.line = line
+
+    def __str__(self):
+        return f'{self.page}.{self.line}'
+
+    def increment(self):
+        '''Increment the line number'''
+        self.line += 1
+
+    @classmethod
+    def from_str(cls, string):
+        '''Construct a new representation from a str'''
+        page, line = map(int, string.split('.'))
+        return cls(page, line)
+
+
+
 def read_text(infilename):
     with open(infilename, newline='') as infile:
-        page = line = None
+        ref = None
         longest = 0
         chars = set()
         reader = csv.reader(infile)
@@ -17,14 +42,13 @@ def read_text(infilename):
         for row in reader:
             coptic = row[2]
             note = row[7]
-            line_number = row[0]
-            # fill in continuous line numbers
+            # Parse the page and line reference.
             try:
-                page, line = map(int, line_number.split('.'))
+                ref = LineRef.from_str(row[0])
             except ValueError:
-                line += 1
-                line_number = f'{page}.{line}'
-            print(f'{line_number: ^5} : {coptic: <62} : {note}')
+                # Otherwise calculate the next expected line number.
+                ref.increment()
+            print(f'{str(ref): ^5} : {coptic: <62} : {note}')
             longest = max(longest, len(coptic))
             chars.update(set(coptic))
     print(f'Longest Coptic line is {longest}')
