@@ -166,9 +166,9 @@ def construct_markdown(text):
     # format lines in a table, since markdown doesn't support <ol> with
     # our multilevel reference line numbers.
     headings = ('ref', 'coptic text')
-    headings = map(lambda head: ' ' + head + ' ', headings)
+    headings = list(map(lambda head: ' ' + head + ' ', headings))
     md = '|'.join(headings) + '\n'
-    dividers = map(lambda head: '-' * len(head), headings)
+    dividers = list(map(lambda head: '-' * len(head), headings))
     md += '|'.join(dividers) + '\n'
 
     for line in text:
