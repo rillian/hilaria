@@ -160,6 +160,23 @@ def check_whitespace(text):
                 print(f'  "...{line.coptic[-10:]}"')
 
 
+def construct_markdown(text):
+    '''Construct a markdown version of the text.'''
+
+    # format lines in a table, since markdown doesn't support <ol> with
+    # our multilevel reference line numbers.
+    headings = ('ref', 'coptic text')
+    headings = map(lambda head: ' ' + head + ' ', headings)
+    md = '|'.join(headings) + '\n'
+    dividers = map(lambda head: '-' * len(head), headings)
+    md += '|'.join(dividers) + '\n'
+
+    for line in text:
+        md += f'{line.ref}|{line.coptic}\n'
+
+    return md
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) < 2:
@@ -173,3 +190,6 @@ if __name__ == '__main__':
     check_macrons(text)
     check_punctuation(text)
     check_whitespace(text)
+
+    md = construct_markdown(text)
+    print(md)
