@@ -108,6 +108,12 @@ def check_macrons(text):
             print(f'  {line.coptic}')
             print(f'  {" " * offset}^')
             print('Consider U+0304 Combining Macron instead.\n')
+        if '\u2CEF' in line.coptic:
+            print(f'Error: line {line.ref} contains U+2CEF Combining Ni.')
+            offset = line.coptic.find('\u2CEF')
+            print(f'  {line.coptic}')
+            print(f'  {" " * offset}^')
+            print('Consider U+0304 Combining Macron instead.\n')
 
 
 def check_punctuation(text):
