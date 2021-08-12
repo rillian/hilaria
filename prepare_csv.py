@@ -56,7 +56,10 @@ def read_text(infilename):
             note = row[7]
             # Parse the page and line reference.
             try:
-                ref = LineRef.from_str(row[0])
+                newref = LineRef.from_str(row[0])
+                if ref and newref.page == ref.page and newref.line != ref.line + 1:
+                    print(f'Warning: Line numbering off: Found {newref} following {ref}')
+                ref = newref
             except ValueError:
                 # Otherwise calculate the next expected line number.
                 ref.increment()
