@@ -175,6 +175,49 @@ def construct_markdown(text):
 
     return md
 
+def construct_html(text):
+    '''Construct an html version of the text.'''
+    import markdown
+
+    # Construct a markdown version, and render that with a custom preamble.
+    md = construct_markdown(text)
+    render = markdown.markdown(md, extensions=['tables'])
+
+    header = '''<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>Life of Hilaria</title>
+<style>
+/* Coptic-friendly font choices. */
+body {
+  font-family: Antinoou, Noto Sans, sans-serif;
+}
+/* Markdown requires a table header. Hide it. */
+tr th {
+  display: none;
+}
+/* De-emphasize line numbers. */
+tr td:first-child {
+  color: gray;
+  font-size: 12px;
+  padding-right: 18px;
+}
+/* Most Coptic fonts need a size-boost to be legible. */
+tr td {
+  color: black;
+  font-size: 24px;
+}
+</style>
+  </head>
+  <body>
+
+'''
+    footer = '''</body>\n</html>\n'''
+    html = header + render + footer
+
+    return html
+
 
 if __name__ == '__main__':
     import sys
@@ -190,5 +233,5 @@ if __name__ == '__main__':
     check_punctuation(text)
     check_whitespace(text)
 
-    md = construct_markdown(text)
-    print(md)
+    html = construct_html(text)
+    print(html)
