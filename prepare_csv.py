@@ -72,7 +72,6 @@ def read_text(infilename):
             lineref = LineRef(ref.page, ref.line)
             line = Line(lineref, coptic, note)
             text.append(line)
-            print(line)
 
     print(f'Longest Coptic line is {longest}')
     return text
