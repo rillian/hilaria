@@ -66,7 +66,11 @@ def read_text(infilename):
 
             longest = max(longest, len(coptic))
 
-            line = Line(ref, coptic, note)
+            # Must construct a new LineRef for eac each lime, otherwise
+            # the Line object will hold a refence which updates at the
+            # same time as our local instance.
+            lineref = LineRef(ref.page, ref.line)
+            line = Line(lineref, coptic, note)
             text.append(line)
             print(line)
 
