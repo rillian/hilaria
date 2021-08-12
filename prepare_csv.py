@@ -103,11 +103,48 @@ def check_macrons(text):
     '''Report issues with combining marks.'''
     for line in text:
         if '\u0305' in line.coptic:
-            print(f'Error: line {line.ref} contains u+0305 Combining Overbar.')
+            print(f'Error: line {line.ref} contains U+0305 Combining Overbar.')
             offset = line.coptic.find('\u0305')
             print(f'  {line.coptic}')
             print(f'  {" " * offset}^')
-            print('Consider u+0304 Combining Macron instead.\n')
+            print('Consider U+0304 Combining Macron instead.\n')
+
+
+def check_punctuation(text):
+    '''Report issues with punctuation marks.'''
+    for line in text:
+        if '.' in line.coptic:
+            print(f'Error: line {line.ref} contains a period.')
+            offset = line.coptic.find('.')
+            print(f'  {line.coptic}')
+            print(f'  {" " * offset}^')
+            print('Consider U+00B7 Middle Dot instead.\n')
+        elif ',' in line.coptic:
+            print(f'Error: line {line.ref} contains a comma.')
+            offset = line.coptic.find('.')
+            print(f'  {line.coptic}')
+            print(f'  {" " * offset}^')
+            print('This is not native Coptic punctuation.\n')
+
+
+def check_whitespace(text):
+    '''Report issues with leading/trailing whitespace.'''
+    for line in text:
+        if line.coptic != str.strip(line.coptic):
+            leading = line.coptic[0].isspace()
+            trailing = line.coptic[:1].isspace()
+            if line.coptic.endswith('\n'):
+                print(f'Warning: line {line.ref} contains an extra newline.')
+                print(f'  "...{line.coptic[-10:-1]}\\n"')
+            elif leading and trailing:
+                print(f'Warning: line {line.ref} contains both leading and trailing whitespace.')
+                print(f'  "{line.coptic[:5]}...{line.coptic[-5:]}"')
+            elif leading:
+                print(f'Warning: line {line.ref} contains leading whitespace.')
+                print(f'  "{line.coptic[:10]}..."')
+            else:
+                print(f'Warning: line {line.ref} contains trailing whitespace.')
+                print(f'  "...{line.coptic[-10:]}"')
 
 
 if __name__ == '__main__':
@@ -121,3 +158,5 @@ if __name__ == '__main__':
     text = read_text(sys.argv[1])
     analyse_chars(text)
     check_macrons(text)
+    check_punctuation(text)
+    check_whitespace(text)
