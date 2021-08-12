@@ -99,6 +99,17 @@ def analyse_chars(text):
         print(f'  {label}\t{ord(key):04X}\t{name}')
 
 
+def check_macrons(text):
+    '''Report issues with combining marks.'''
+    for line in text:
+        if '\u0305' in line.coptic:
+            print(f'Error: line {line.ref} contains u+0305 Combining Overbar.')
+            offset = line.coptic.find('\u0305')
+            print(f'  {line.coptic}')
+            print(f'  {" " * offset}^')
+            print('Consider u+0304 Combining Macron instead.\n')
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) < 2:
@@ -109,3 +120,4 @@ if __name__ == '__main__':
 
     text = read_text(sys.argv[1])
     analyse_chars(text)
+    check_macrons(text)
