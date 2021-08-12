@@ -172,7 +172,7 @@ def construct_markdown(text):
     md += '|'.join(dividers) + '\n'
 
     for line in text:
-        md += f'{line.ref}|{line.coptic}\n'
+        md += f'{line.ref}|{str.strip(line.coptic)}\n'
 
     return md
 
