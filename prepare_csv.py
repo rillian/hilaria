@@ -120,6 +120,24 @@ def check_macrons(text):
             print(f'  {line.coptic}')
             print(f'  {" " * offset}^')
             print('Consider U+0304 Combining Macron instead.\n')
+        if line.coptic.count('\u0304') > 1:
+            # Find the indices of all the overbar characters.
+            bars = [line.coptic.index('\u0304')]
+            while True:
+                match = line.coptic.find('\u0304', bars[-1] + 1)
+                if match < 0:
+                    # No more matches in the string
+                    break
+                bars.append(match)
+            # Look for adjacent examples.
+            last = -2
+            for match in bars:
+                if match == last + 2:
+                    print(f'Warning: line {line.ref} contains macrons on adjacent characters.')
+                    print(f'  {line.coptic}')
+                    print(f'  {" " * last}^^')
+                    print('Most publications recommend Half/Conjoining Macrons U+FE24, [U+FE26,] U+FE25.\n')
+                last = match
 
 
 def check_punctuation(text):
