@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 
-# Script to parse text out of a CSV file exported from Google Docs
-# and mark it up for input into the Coptic Scriptorium ingest tooling.
+'''
+Script to parse text out of a CSV file exported from Google Docs
+and mark it up for input into the Coptic Scriptorium ingest tooling.
+'''
 
 import csv
+import os
 import unicodedata
+
+import markdown
+
 
 class LineRef:
     '''Represent a `page.line` style reference
@@ -42,6 +48,9 @@ class Line:
 
 
 def read_text(infilename):
+    '''Read and parse a csv file.
+
+    Returns a list of Line objects representing the text.'''
     text = []
     with open(infilename, newline='') as infile:
         ref = None
@@ -91,7 +100,7 @@ def analyse_chars(text):
         try:
             name = unicodedata.name(key)
         except ValueError:
-            name = f'unnamed character'
+            name = 'unnamed character'
         if key == '\n':
             name = 'newline'
         elif key == '\t':
@@ -193,9 +202,9 @@ def construct_markdown(text):
 
     return md
 
+
 def construct_html(text):
     '''Construct an html version of the text.'''
-    import markdown
 
     # Construct a markdown version, and render that with a custom preamble.
     md = construct_markdown(text)
@@ -237,19 +246,27 @@ tr td {
     return html
 
 
+def handle_file(filename):
+    '''Read a csv file, perform lints and write out a formatted version.'''
+    text = read_text(filename)
+    analyse_chars(text)
+    check_macrons(text)
+    check_punctuation(text)
+    check_whitespace(text)
+
+    html_filename = os.path.splitext(filename)[0] + '.html'
+    html = construct_html(text)
+    print(f'Writing text to {html_filename}')
+    with open(html_filename, 'w') as outfile:
+        outfile.write(html)
+
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) < 2:
         print(f'Usage: {sys.argv[0]} <filename.csv>')
         print()
         print('Parse the text of Hillaria out of a csv export.')
-        exit(1)
+        sys.exit(1)
 
-    text = read_text(sys.argv[1])
-    analyse_chars(text)
-    check_macrons(text)
-    check_punctuation(text)
-    check_whitespace(text)
-
-    html = construct_html(text)
-    print(html)
+    handle_file(sys.argv[1])
