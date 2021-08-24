@@ -53,7 +53,7 @@ def read_text(infilename):
     Returns a list of Line objects representing the text.'''
     text = []
     with open(infilename, newline='') as infile:
-        ref = None
+        ref = LineRef(0,0)
         longest = 0
 
         reader = csv.reader(infile)
@@ -66,7 +66,7 @@ def read_text(infilename):
             # Parse the page and line reference.
             try:
                 newref = LineRef.from_str(row[0])
-                if ref and newref.page == ref.page and newref.line != ref.line + 1:
+                if newref.page == ref.page and newref.line != ref.line + 1:
                     print(f'Warning: Line numbering off: Found {newref} following {ref}')
                 ref = newref
             except ValueError:
