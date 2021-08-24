@@ -186,6 +186,30 @@ def check_whitespace(text):
                 print(f'  "...{line.coptic[-10:]}"')
 
 
+def construct_sgml(text):
+    '''Construct an SGML fragment representing the text.
+
+    Use TEI tags to prepare a partial tagged document for
+    submission to the Coptic Scriptorium publication tools.
+    '''
+    sgml = '<!DOCTYPE SGML>\n'
+    page = None
+    for line in text:
+        if line.ref.page != page:
+            if page:
+                # Close the old page, if any.
+                sgml += '</pb>\n'
+            # Open new page.
+            sgml += f'<pb ed="Drescher" n="{line.ref.page}">\n'
+            page = line.ref.page
+        # Write out the line of text.
+        sgml += f'<lb ed="Drescher" n="{line.ref.line}">{line.coptic}</lb>\n'
+    # Close the final page.
+    sgml += '</pb>'
+
+    return sgml
+
+
 def construct_markdown(text):
     '''Construct a markdown version of the text.'''
 
@@ -253,6 +277,12 @@ def handle_file(filename):
     check_macrons(text)
     check_punctuation(text)
     check_whitespace(text)
+
+    sgml_filename = os.path.splitext(filename)[0] + '.sgml'
+    sgml = construct_sgml(text)
+    print(f'Writing text to {sgml_filename}')
+    with open(sgml_filename, 'w') as outfile:
+        outfile.write(sgml)
 
     html_filename = os.path.splitext(filename)[0] + '.html'
     html = construct_html(text)
