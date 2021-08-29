@@ -196,14 +196,29 @@ def construct_sgml(text):
     page = None
     for line in text:
         if line.ref.page != page:
+            # Apply page and line breaks
             if page:
                 # Close the old page, if any.
                 sgml += '</pb>\n'
             # Open new page.
             sgml += f'<pb ed="Drescher" n="{line.ref.page}">\n'
             page = line.ref.page
+
+        # Convert any inline markup
+        coptic = line.coptic
+        coptic = coptic.replace('*', '<pb edi="M.583">')
+        coptic = coptic.replace('(sic)', '<note note="sic">')
+        # The segmenter treats line breaks as concatenations,
+        # so remove word-continutation hyphens, but insert
+        # an underscore to represent a word-break at the
+        # end of a line.
+        if coptic.endswith('-'):
+            coptic = coptic[:-1]
+        else:
+            coptic += ('_')
+
         # Write out the line of text.
-        sgml += f'<lb ed="Drescher" n="{line.ref.line}">{line.coptic}</lb>\n'
+        sgml += f'<lb ed="Drescher" n="{line.ref.line}">{coptic}</lb>\n'
     # Close the final page.
     sgml += '</pb>'
 
