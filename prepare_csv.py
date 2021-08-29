@@ -186,6 +186,14 @@ def check_whitespace(text):
                 print(f'  "...{line.coptic[-10:]}"')
 
 
+def check_continuations(text):
+    '''Report issues with linebreaks and continuation marks.'''
+    for line in text:
+        if '\u00AD' in line.coptic:
+            print(f'Warning: line {line.ref} contains a soft-hyphen character.')
+            print('  Tools may prefer a basic hyphen "-" instead.')
+
+
 def construct_sgml(text):
     '''Construct an SGML fragment representing the text.
 
@@ -292,6 +300,7 @@ def handle_file(filename):
     check_macrons(text)
     check_punctuation(text)
     check_whitespace(text)
+    check_continuations(text)
 
     sgml_filename = os.path.splitext(filename)[0] + '.sgml'
     sgml = construct_sgml(text)
