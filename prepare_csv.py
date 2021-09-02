@@ -191,7 +191,27 @@ def check_continuations(text):
     for line in text:
         if '\u00AD' in line.coptic:
             print(f'Warning: line {line.ref} contains a soft-hyphen character.')
-            print('  Tools may prefer a basic hyphen "-" instead.')
+            offset = line.coptic.index('\u00AD')
+            print(f'  {line.coptic}')
+            print(f'  {" " * offset}^')
+            print('  Tools may not understand this character.')
+
+def consolidate_whitespace(coptic):
+    '''Replace successive whitespace characters with a single space.'''
+    result = []
+    span = False
+    for c in coptic:
+        if c.isspace():
+            if not span:
+                span = True
+                result.append(' ')
+            else:
+                # drop subsequent whitespace characters
+                continue
+        else:
+            span = False
+            result.append(c)
+    return ''.join(result)
 
 
 def construct_sgml(text):
@@ -209,9 +229,11 @@ def construct_sgml(text):
             page = line.ref.page
 
         # Convert any inline markup
-        coptic = line.coptic
-        coptic = coptic.replace('*', '<pb edi="M.583">')
+        coptic = line.coptic.strip()
+        coptic = coptic.replace('*', '<pb ed="M.583">')
         coptic = coptic.replace('(sic)', '<note note="sic">')
+        # AZ indicated multiple whitespace characters confused the tagger.
+        coptic = consolidate_whitespace(coptic)
         # The segmenter treats line breaks as concatenations,
         # so remove word-continutation hyphens, but insert
         # an underscore to represent a word-break at the
@@ -301,6 +323,8 @@ def handle_file(filename):
     print(f'Writing text to {sgml_filename}')
     with open(sgml_filename, 'w') as outfile:
         outfile.write(sgml)
+    sgml_text = [Line(None, line, None) for line in sgml.split('\n')]
+    analyse_chars(sgml_text)
 
     html_filename = os.path.splitext(filename)[0] + '.html'
     html = construct_html(text)
