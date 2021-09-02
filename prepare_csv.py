@@ -231,7 +231,7 @@ def construct_sgml(text):
         # Convert any inline markup
         coptic = line.coptic.strip()
         coptic = coptic.replace('*', '<pb ed="M.583">')
-        coptic = coptic.replace('(sic)', '<note note="sic">')
+        coptic = coptic.replace('(sic)', '')
         # AZ indicated multiple whitespace characters confused the tagger.
         coptic = consolidate_whitespace(coptic)
         # The segmenter treats line breaks as concatenations,
