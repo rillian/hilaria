@@ -222,6 +222,9 @@ def construct_sgml(text):
     '''
     sgml = '<!DOCTYPE SGML>\n'
     page = None
+    manuscript_page = 198
+    sgml += f'<pb ed="M.583" n="{manuscript_page}">\n'
+    manuscript_page += 1
     for line in text:
         if line.ref.page != page:
             # Mark up page changes recorded in the LineRef.
@@ -230,8 +233,11 @@ def construct_sgml(text):
 
         # Convert any inline markup
         coptic = line.coptic.strip()
-        coptic = coptic.replace('*', '<pb ed="M.583">')
+        if '*' in coptic:
+            coptic = coptic.replace('*', f'<pb ed="M.583" n="{manuscript_page}">')
+            manuscript_page += 1
         coptic = coptic.replace('(sic)', '')
+        coptic = coptic.strip()
         # AZ indicated multiple whitespace characters confused the tagger.
         coptic = consolidate_whitespace(coptic)
         # The segmenter treats line breaks as concatenations,
