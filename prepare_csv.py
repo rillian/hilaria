@@ -204,11 +204,7 @@ def construct_sgml(text):
     page = None
     for line in text:
         if line.ref.page != page:
-            # Apply page and line breaks
-            if page:
-                # Close the old page, if any.
-                sgml += '</pb>\n'
-            # Open new page.
+            # Mark up page changes recorded in the LineRef.
             sgml += f'<pb ed="Drescher" n="{line.ref.page}">\n'
             page = line.ref.page
 
@@ -226,9 +222,7 @@ def construct_sgml(text):
             coptic += ('_')
 
         # Write out the line of text.
-        sgml += f'<lb ed="Drescher" n="{line.ref.line}">{coptic}</lb>\n'
-    # Close the final page.
-    sgml += '</pb>'
+        sgml += f'<lb ed="Drescher" n="{line.ref.line}">{coptic}\n'
 
     return sgml
 
