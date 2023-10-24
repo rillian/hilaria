@@ -42,7 +42,8 @@ def convert(c):
         return 'ⲙ'
     elif c == 'n':
         return 'ⲛ'
-    # return 'ⲝ'
+    elif c == 'x':
+        return 'ⲝ'
     elif c == 'o':
         return 'ⲟ'
     elif c == 'p':
